@@ -78,7 +78,7 @@ ENV TZ=Asia/Shanghai
 ENV GIN_MODE=release
 RUN cat /etc/apk/repositories \
   && apk update \
-  && apk add --no-cache ca-certificates tzdata wget
+  && apk add --no-cache ca-certificates tzdata wget rclone
 
 # Copy backend executable from backend-builder stage
 COPY --from=backend-builder /app/share .
