@@ -78,7 +78,7 @@ ENV TZ=Asia/Shanghai
 ENV GIN_MODE=release
 RUN cat /etc/apk/repositories \
   && apk update \
-  && apk add --no-cache ca-certificates tzdata wget
+  && apk add --no-cache ca-certificates tzdata wget rclone
 
 # Copy backend executable from backend-builder stage
 COPY --from=backend-builder /app/share .
@@ -87,11 +87,11 @@ COPY --from=backend-builder /app/share .
 COPY etc/config.yaml ./etc/config.yaml
 
 # 创建数据目录
-RUN mkdir -p /app/data
+RUN mkdir -p /app/data /app/media
 
 # Expose the port the application runs on (from config.yaml, default 12395)
-EXPOSE 12395
-
+EXPOSE 12395 12396
+CMD rclone serve webdav   /app/meida   --addr 0.0.0.0:12396   --user admin   --pass admin141421   --read-only=false   --vfs-cache-mode full 
 # 添加健康检查
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:12395/ || exit 1
